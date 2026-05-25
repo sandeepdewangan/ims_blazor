@@ -51,9 +51,9 @@ namespace IMS.DataAccess
             return _inventories.Where(x => x.InventoryName.Contains(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        public async Task<Inventory> GetInventoryByIdAsync(int invId)
+        public async Task<Inventory?> GetInventoryByIdAsync(int invId)
         {
-            return await Task.FromResult(_inventories.First(x => x.InventoryId == invId));
+            return await Task.FromResult(_inventories.FirstOrDefault(x => x.InventoryId == invId));
         }
     }
 }

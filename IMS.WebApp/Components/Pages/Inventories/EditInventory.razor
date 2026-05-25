@@ -46,6 +46,11 @@
     protected override async Task OnParametersSetAsync()
     {
         this.inventory = this.inventory ?? await InventoryRepo.GetInventoryByIdAsync(this.InventoryId);
+
+        if(this.inventory is null)
+        {
+            NavManager.NotFound();
+        }
     }
 
     private async Task Update()

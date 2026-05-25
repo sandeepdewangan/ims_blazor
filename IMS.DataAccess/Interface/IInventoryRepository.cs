@@ -6,7 +6,7 @@ namespace IMS.DataAccess.Interface
     {
         Task AddInventoryAsync(Inventory inventory);
         Task EditInventoryAsync(Inventory inventory);
-        Task<Inventory> GetInventoryByIdAsync(int invId);
+        Task<Inventory?> GetInventoryByIdAsync(int invId);
 
         Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string? name = null);
     }
