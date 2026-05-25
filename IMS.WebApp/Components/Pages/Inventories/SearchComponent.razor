@@ -1,4 +1,9 @@
 ﻿
+@if(SearchFilter is null)
+{
+    SearchFilter = string.Empty;
+}
+
 @* Enhance is true -> The browser will not load when fetching data. Only partial DOM will be replaced. *@
 
 <EditForm Enhance="true" Model="SearchFilter" FormName="formSearch" OnSubmit="Search">

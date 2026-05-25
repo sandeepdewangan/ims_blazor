@@ -1,4 +1,7 @@
-﻿@if (Inventory != null)
+﻿@inject IInventoryRepository InventoryRepo
+@inject NavigationManager NavManager
+
+@if (Inventory != null)
 {
     <tr>
         <td>@Inventory.InventoryName </td>
@@ -6,6 +9,11 @@
         <td>@Inventory.Price </td>
         <td>
             <a href="/editinventory/@Inventory.InventoryId" class="btn btn-light">Edit</a>
+        </td>
+        <td>
+            <EditForm Enhance="true" Model="Inventory" FormName="@($"formDelete{Inventory.InventoryId}")" OnValidSubmit="() => DeleteInventory(Inventory.InventoryId)">
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </EditForm>
         </td>
     </tr>
 }
@@ -15,4 +23,9 @@
     [Parameter]
     public Inventory? Inventory { get; set; }
 
+    private async Task DeleteInventory(int invId)
+    {
+        await InventoryRepo.DeleteInventoryByIdAsync(invId);
+        NavManager.Refresh();
+    }
 }

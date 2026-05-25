@@ -31,6 +31,16 @@ namespace IMS.DataAccess
             return Task.CompletedTask;
         }
 
+        public Task DeleteInventoryByIdAsync(int invId)
+        {
+            var inv = _inventories.FirstOrDefault(i => i.InventoryId == invId);
+            if (inv is not null)
+            {
+                _inventories.Remove(inv);
+            }
+            return Task.CompletedTask;
+        }
+
         public Task EditInventoryAsync(Inventory inventory)
         {
             if (_inventories.Any(x => x.InventoryId != inventory.InventoryId && x.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase))) return Task.CompletedTask;
