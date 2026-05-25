@@ -1,0 +1,60 @@
+﻿@page "/editinventory/{inventoryId:int}"
+@inject IInventoryRepository InventoryRepo
+@inject NavigationManager NavManager
+
+<h3>Edit Inventory</h3>
+
+@if (inventory is not null)
+{
+    <EditForm Model="inventory" FormName="formInventory" OnValidSubmit="Update">
+        <DataAnnotationsValidator />
+        @* <ValidationSummary /> *@
+
+        <InputNumber @bind-Value="inventory.InventoryId" hidden />
+
+        <div class="form-group">
+            <label for="name">Inventory Name</label>
+            <InputText id="name" @bind-Value="inventory.InventoryName" class="form-control" />
+            <ValidationMessage For="() => inventory.InventoryName" />
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <InputNumber id="quantity" @bind-Value="inventory.Quantity" class="form-control" />
+            <ValidationMessage For="() => inventory.Quantity" />
+        </div>
+        <div class="form-group">
+            <label for="price">Price</label>
+            <InputNumber id="price" @bind-Value="inventory.Price" class="form-control" />
+            <ValidationMessage For="() => inventory.Price" />
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Update</button>
+        &nbsp;
+        @* This will not cause a full page reload to the /inventories because of enhance navigation *@
+        <a href="/inventories" class="btn btn-outline-danger">Cancel</a>
+    </EditForm>
+}
+
+@code {
+
+    [Parameter]
+    public int InventoryId { get; set; }
+
+    [SupplyParameterFromForm]
+    private Inventory? inventory { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this.inventory = this.inventory ?? await InventoryRepo.GetInventoryByIdAsync(this.InventoryId);
+    }
+
+    private async Task Update()
+    {
+        if(inventory is not null)
+        {
+            await InventoryRepo.EditInventoryAsync(inventory);
+            NavManager.NavigateTo("/inventories");
+        }
+    }
+
+}
