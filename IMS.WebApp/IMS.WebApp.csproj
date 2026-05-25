@@ -7,4 +7,10 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IMS.Plugins\IMS.Plugins.InMemory\IMS.Plugins.InMemory.csproj" />
+    <ProjectReference Include="..\MIS.CoreBusiness\MIS.CoreBusiness.csproj" />
+    <ProjectReference Include="..\MIS.UseCases\MIS.UseCases.csproj" />
+  </ItemGroup>
+
 </Project>

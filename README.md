@@ -1,1 +1,3 @@
-# IMS
+# Inventory Management System
+
+## 
