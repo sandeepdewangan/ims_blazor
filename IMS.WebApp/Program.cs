@@ -1,8 +1,6 @@
-using IMS.Plugins.InMemory;
+using IMS.DataAccess;
+using IMS.DataAccess.Interface;
 using IMS.WebApp.Components;
-using MIS.UseCases.Inventories;
-using MIS.UseCases.Inventories.Interface;
-using MIS.UseCases.PluginInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +10,7 @@ builder.Services.AddRazorComponents();
 
 // AddSingleton: Created once for entire application and Destroyed when app stops
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
-
 // AddTransient: Created every time requested and Destroyed after use
-builder.Services.AddTransient<IViewInventoriesByNameUseCase, ViewInventoriesByNameUseCase>();
-
 // AddScoped: One instance per HTTP request
 
 var app = builder.Build();

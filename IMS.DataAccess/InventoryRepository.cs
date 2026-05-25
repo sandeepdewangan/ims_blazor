@@ -1,7 +1,7 @@
-﻿using MIS.CoreBusiness;
-using MIS.UseCases.PluginInterfaces;
+﻿using IMS.DataAccess.Interface;
+using MIS.CoreBusiness;
 
-namespace IMS.Plugins.InMemory
+namespace IMS.DataAccess
 {
     public class InventoryRepository : IInventoryRepository
     {
@@ -17,7 +17,7 @@ namespace IMS.Plugins.InMemory
                 new Inventory {InventoryId=4, InventoryName="Bike Pedels", Quantity=20, Price=100},
             };
         }
-        public async Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string name)
+        public async Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string? name = null)
         {
             if (string.IsNullOrWhiteSpace(name)) return await Task.FromResult(_inventories);
 

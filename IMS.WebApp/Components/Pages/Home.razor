@@ -1,28 +1,11 @@
 ﻿@page "/"
 
-@inject IViewInventoriesByNameUseCase ViewInventoriesByNameUseCase
 
 
 <PageTitle>Inventories Page</PageTitle>
 
-<ul>
-    @if (inventories is not null && inventories.Count > 0)
-    {
-        foreach (var inventory in inventories)
-        {
-            <li>
-                @inventory.InventoryName
-            </li>
-        }
-    }
-</ul>
+
 
 @code {
-    private List<Inventory>? inventories;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Inject the Use Case
-        inventories = (await ViewInventoriesByNameUseCase.ExecuteAsync("wh")).ToList();
-    }
+   
 }

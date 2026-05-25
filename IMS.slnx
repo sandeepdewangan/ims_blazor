@@ -1,8 +1,5 @@
 <Solution>
-  <Folder Name="/IMS.Plugins/">
-    <Project Path="IMS.Plugins/IMS.Plugins.InMemory/IMS.Plugins.InMemory.csproj" />
-  </Folder>
+  <Project Path="IMS.DataAccess/IMS.DataAccess.csproj" />
   <Project Path="IMS.WebApp/IMS.WebApp.csproj" />
   <Project Path="MIS.CoreBusiness/MIS.CoreBusiness.csproj" />
-  <Project Path="MIS.UseCases/MIS.UseCases.csproj" />
 </Solution>
