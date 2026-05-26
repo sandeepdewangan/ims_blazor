@@ -1,0 +1,27 @@
+﻿
+@if(SearchFilter is null)
+{
+    SearchFilter = string.Empty;
+}
+
+@* Enhance is true -> The browser will not load when fetching data. Only partial DOM will be replaced. *@
+
+<EditForm Enhance="true" Model="SearchFilter" FormName="formSearch" OnSubmit="Search">
+    <div class="input-group">
+        <InputText class="form-control" placeholder="Enter anything to search" @bind-Value="@this.SearchFilter" />
+        <button type="submit" class="btn btn-success input-group-text">Search</button>
+    </div>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    private string SearchFilter { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    private void Search()
+    {
+        OnSearch.InvokeAsync(SearchFilter);
+    }
+}
