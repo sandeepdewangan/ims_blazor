@@ -1,0 +1,15 @@
+﻿.search-filter{
+    overflow-y: auto;
+    max-height:300px;
+    border:1px solid silver;
+    padding-top:10px;
+    width: 50%;
+}
+
+div ul{
+    list-style-type: none;
+}
+
+div ul li{
+    cursor:pointer;
+}
