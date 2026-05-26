@@ -1,0 +1,40 @@
+﻿@inject IInventoryRepository InventoryRepo
+@rendermode InteractiveServer
+
+<div class="input-group">
+    <input class="form-control" placeholder="Enter anything to search" @bind-value="this.SearchFilter" @bind-value:event="oninput"/>
+    <button type="button" class="btn btn-success input-group-text" @onclick="HandleSearch">Search</button>
+</div>
+@if(inventories is not null && inventories.Count > 0)
+{ 
+    <div style="overflow-y;auto; max-height:300px;border:1px solid silver; padding-top:5px">
+        <ul style="list-style-type:none">
+            @foreach(var inv in inventories)
+            {
+                <li @key="inv.InventoryId" style="cursor:pointer">
+                    @inv.InventoryName
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private string _searchFilter;
+    private string SearchFilter { 
+        get => _searchFilter; 
+        set
+        {
+            _searchFilter = value;
+            HandleSearch();
+        }
+    }
+    private List<Inventory> inventories = new List<Inventory>();
+
+    private async Task HandleSearch()
+    {
+        inventories = (await InventoryRepo.GetInventoriesByNameAsync(this.SearchFilter)).ToList();
+        StateHasChanged();
+    }
+
+}
