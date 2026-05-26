@@ -11,9 +11,7 @@
             <a href="/editproduct/@Product.ProductId" class="btn btn-light">Edit</a>
         </td>
         <td>
-            <EditForm Enhance="true" Model="Product" FormName="@($"formDelete{Product.ProductId}")" OnValidSubmit="() => DeleteProduct(Product.ProductId)">
-                <button type="submit" class="btn btn-outline-danger">Delete</button>
-            </EditForm>
+            <button class="btn btn-outline-danger" @onclick="async ()=> {await HandleDelete(Product.ProductId);}">Delete</button>
         </td>
     </tr>
 }
@@ -23,9 +21,9 @@
     [Parameter]
     public Product? Product { get; set; }
 
-    private async Task DeleteProduct(int invId)
+    private async Task HandleDelete(int prodId)
     {
-        await ProductRepo.DeleteProductByIdAsync(invId);
-        NavManager.Refresh();
+        await ProductRepo.DeleteProductByIdAsync(prodId);
+        Product = null;
     }
 }

@@ -5,7 +5,7 @@ using IMS.WebApp.Components;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorComponents();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 
 // AddSingleton: Created once for entire application and Destroyed when app stops
@@ -32,6 +32,9 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>();
+// Add Interactive SSR and also
+// include this above
+// builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
 app.Run();
