@@ -14,6 +14,7 @@ namespace MIS.CoreBusiness
         public double Price { get; set; }
 
         // Many to Many
+        [Product_EnsurePriceIsGreaterThanInventoriesCost]
         public List<ProductInventory> ProductInventories { get; set; } = new List<ProductInventory>();
 
         // Helper function to add product inventories
