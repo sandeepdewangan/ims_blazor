@@ -1,0 +1,79 @@
+﻿@page "/report"
+@inject IInventoryReportRepository InventoryReportRepo
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<h3>Inventories Report</h3>
+
+<div id="printarea">
+<div class="row">
+    <div class="col">
+        <label>Inventory Name</label>
+        <input type="text" id="inv" class="form-control" @bind-value="invName" />
+    </div>
+    <div class="col">
+        <label>Date From</label>
+        <input type="date" id="date" class="form-control" @bind-value="dateFrom" />
+    </div>
+    <div class="col">
+        <label>Date To</label>
+        <input type="date" id="date" class="form-control" @bind-value="dateTo" />
+    </div>
+    <div class="col">
+        <label>Order Number</label>
+        <input type="text" id="inv" class="form-control" @bind-value="orderId" />
+    </div>
+    <div class="col">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-sm btn-primary form-control" @onclick="SearchInventories">Search</button>
+    </div>
+    <div class="col">
+        <label>&nbsp;</label>
+        <button type="button" class="btn btn-sm btn-success form-control" @onclick="Print">Print</button>
+    </div>
+</div>
+
+@if(inventories is not null && inventories.Count() > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Inventory Name</th>
+                <th>Tx Date</th>
+                <th>Quantity</th>
+                <th>Order Number</th>
+                <th>Production Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var inv in inventories)
+            {
+                <tr>
+                    <td>@inv.InventoryName</td>
+                    <td>@inv.TxDate.ToShortDateString()</td>
+                    <td>@inv.Quantity</td>
+                    <td>@inv.OrderId</td>
+                    <td>@inv.ProductionNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+</div>
+@code {
+    private string invName;
+    private DateTime? dateFrom;
+    private DateTime? dateTo;
+    private string orderId;
+    private IEnumerable<InventoriesModel>? inventories;
+
+    private async Task SearchInventories()
+    {
+        inventories = await InventoryReportRepo.Filter(invName, dateFrom, dateTo, orderId);
+    }
+
+    private async Task Print()
+    {
+        await JSRuntime.InvokeVoidAsync("print");
+    }
+}

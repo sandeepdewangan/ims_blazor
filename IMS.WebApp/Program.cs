@@ -11,6 +11,7 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 // AddSingleton: Created once for entire application and Destroyed when app stops
 builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+builder.Services.AddSingleton<IInventoryReportRepository, InventoryReportRepository>();
 // AddTransient: Created every time requested and Destroyed after use
 // AddScoped: One instance per HTTP request
 
