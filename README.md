@@ -54,3 +54,11 @@ builder.Services.AddDbContextFactory<IMSContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("InventoryManagement"));
 });
 ```
+
+## Multiple DB Migration
+
+`add-migration "InitialIdentity" -Context IMSIdentityContext`
+
+`update-database -Context IMSIdentityContext`
+
+

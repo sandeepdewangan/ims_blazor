@@ -1,18 +1,51 @@
 using IMS.DataAccess;
 using IMS.DataAccess.Interface;
 using IMS.WebApp.Components;
+using IMS.WebApp.Components.Account;
+using IMS.WebApp.Data;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+// Add services to the container.
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+builder.Services.AddCascadingAuthenticationState();
+
+builder.Services.AddScoped<IdentityRedirectManager>();
+
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
+builder.Services.AddDbContext<IMSIdentityContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("IMSAccount")));
+
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+    })
+    .AddEntityFrameworkStores<IMSIdentityContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddDbContextFactory<IMSContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("InventoryManagement"));
 });
-
-// Add services to the container.
-builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 if (builder.Environment.IsEnvironment("Testing"))
 {
@@ -32,8 +65,6 @@ else
     // AddTransient: Created every time requested and Destroyed after use
     // AddScoped: One instance per HTTP request
 }
-
-
 
 var app = builder.Build();
 
@@ -57,5 +88,7 @@ app.MapStaticAssets();
 // include this above
 // builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+app.MapAdditionalIdentityEndpoints(); ;
 
 app.Run();
