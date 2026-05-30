@@ -1,6 +1,7 @@
 using IMS.DataAccess;
 using IMS.DataAccess.Interface;
 using IMS.WebApp.Components;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +14,26 @@ builder.Services.AddDbContextFactory<IMSContext>(options =>
 // Add services to the container.
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
+if (builder.Environment.IsEnvironment("Testing"))
+{
+    StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
-// AddSingleton: Created once for entire application and Destroyed when app stops
-builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
-builder.Services.AddSingleton<IInventoryReportRepository, InventoryReportRepository>();
-// AddTransient: Created every time requested and Destroyed after use
-// AddScoped: One instance per HTTP request
+    // In memory test dataset
+    //builder.Services.AddSingleton<IInventoryRepository, InventoryRepository>();
+
+}
+else
+{
+    // PgSQL Database
+    // AddSingleton: Created once for entire application and Destroyed when app stops
+    builder.Services.AddTransient<IInventoryRepository, InventoryRepository>();
+    builder.Services.AddTransient<IProductRepository, ProductRepository>();
+    builder.Services.AddTransient<IInventoryReportRepository, InventoryReportRepository>();
+    // AddTransient: Created every time requested and Destroyed after use
+    // AddScoped: One instance per HTTP request
+}
+
+
 
 var app = builder.Build();
 
