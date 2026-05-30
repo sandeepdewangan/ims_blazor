@@ -1,5 +1,5 @@
 ﻿@page "/editinventory/{inventoryId:int}"
-@attribute [Authorize]
+@attribute [Authorize(Policy = "Admin")]
 @inject IInventoryRepository InventoryRepo
 @inject NavigationManager NavManager
 
