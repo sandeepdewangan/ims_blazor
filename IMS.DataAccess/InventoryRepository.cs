@@ -1,69 +1,61 @@
 ﻿using IMS.DataAccess.Interface;
+using Microsoft.EntityFrameworkCore;
 using MIS.CoreBusiness;
 
 namespace IMS.DataAccess
 {
     public class InventoryRepository : IInventoryRepository
     {
-        private List<Inventory> _inventories;
-
-        public InventoryRepository()
+        private readonly IDbContextFactory<IMSContext> _context;
+        public InventoryRepository(IDbContextFactory<IMSContext> context)
         {
-            _inventories = new List<Inventory>()
-            {
-                new Inventory {InventoryId=1, InventoryName="Bike Seat", Quantity=10, Price=200},
-                new Inventory {InventoryId=2, InventoryName="Bike Body", Quantity=10, Price=1500},
-                new Inventory {InventoryId=3, InventoryName="Bike Wheels", Quantity=20, Price=800},
-                new Inventory {InventoryId=4, InventoryName="Bike Pedels", Quantity=20, Price=100},
-            };
+            _context = context;
         }
 
-        public Task AddInventoryAsync(Inventory inventory)
+        public async Task AddInventoryAsync(Inventory inventory)
         {
-            if (_inventories.Any(x => x.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase)))
-            {
-                return Task.CompletedTask;
-            }
-            var maxId = _inventories.Max(x => x.InventoryId);
-            inventory.InventoryId = maxId + 1;
-            _inventories.Add(inventory);
-
-            return Task.CompletedTask;
+            // We are not using Scoped/Transient in Program.cs, we will destroy dbcontext instance based on ou need.
+            using var db = _context.CreateDbContext();
+            db.Inventories?.Add(inventory);
+            await db.SaveChangesAsync();
         }
 
-        public Task DeleteInventoryByIdAsync(int invId)
+        public async Task DeleteInventoryByIdAsync(int invId)
         {
-            var inv = _inventories.FirstOrDefault(i => i.InventoryId == invId);
+            using var db = _context.CreateDbContext();
+            var inventory = db.Inventories?.Find(invId);
+            if (inventory is null) return;
+            db.Inventories?.Remove(inventory);
+            await db.SaveChangesAsync();
+        }
+
+        public async Task EditInventoryAsync(Inventory inventory)
+        {
+            using var db = _context.CreateDbContext();
+            var inv = await db.Inventories.FindAsync(inventory.InventoryId);
             if (inv is not null)
             {
-                _inventories.Remove(inv);
+                inv.InventoryName = inventory.InventoryName;
+                inv.Quantity = inventory.Quantity;
+                inv.Price = inventory.Price;
+
+                await db.SaveChangesAsync();
             }
-            return Task.CompletedTask;
         }
 
-        public Task EditInventoryAsync(Inventory inventory)
+        public async Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string name)
         {
-            if (_inventories.Any(x => x.InventoryId != inventory.InventoryId && x.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase))) return Task.CompletedTask;
-            var invToUpdate = _inventories.FirstOrDefault(x => x.InventoryId == inventory.InventoryId);
-            if (invToUpdate is not null)
-            {
-                invToUpdate.InventoryName = inventory.InventoryName;
-                invToUpdate.Quantity = inventory.Quantity;
-                invToUpdate.Price = inventory.Price;
-            }
-            return Task.CompletedTask;
-        }
+            using var db = _context.CreateDbContext();
 
-        public async Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string? name = null)
-        {
-            if (string.IsNullOrWhiteSpace(name)) return await Task.FromResult(_inventories);
+            return await db.Inventories.Where(i => i.InventoryName.ToLower().IndexOf(name.ToLower()) >= 0).ToListAsync();
 
-            return _inventories.Where(x => x.InventoryName.Contains(name, StringComparison.OrdinalIgnoreCase));
         }
 
         public async Task<Inventory?> GetInventoryByIdAsync(int invId)
         {
-            return await Task.FromResult(_inventories.FirstOrDefault(x => x.InventoryId == invId));
+            using var db = _context.CreateDbContext();
+            var inv = await db.Inventories.FindAsync(invId);
+            return inv;
         }
     }
 }

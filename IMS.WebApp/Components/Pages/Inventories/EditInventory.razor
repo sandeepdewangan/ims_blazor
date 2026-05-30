@@ -8,7 +8,7 @@
 {
     <EditForm Model="inventory" FormName="formInventory" OnValidSubmit="Update">
         <DataAnnotationsValidator />
-        @* <ValidationSummary /> *@
+        <ValidationSummary />
 
         <InputNumber @bind-Value="inventory.InventoryId" hidden />
 
@@ -41,15 +41,20 @@
     public int InventoryId { get; set; }
 
     [SupplyParameterFromForm]
-    private Inventory? inventory { get; set; }
+    private InventoryViewModel? inventory { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
-        this.inventory = this.inventory ?? await InventoryRepo.GetInventoryByIdAsync(this.InventoryId);
-
         if(this.inventory is null)
         {
-            NavManager.NotFound();
+            var inv = await InventoryRepo.GetInventoryByIdAsync(this.InventoryId);
+            inventory = new InventoryViewModel
+                {
+                    InventoryId = inv.InventoryId,
+                    InventoryName = inv.InventoryName,
+                    Price = inv.Price,
+                    Quantity = inv.Quantity
+                };
         }
     }
 
@@ -57,7 +62,15 @@
     {
         if(inventory is not null)
         {
-            await InventoryRepo.EditInventoryAsync(inventory);
+            var inv = new Inventory
+                {
+                    InventoryId = inventory.InventoryId,
+                    InventoryName = inventory.InventoryName,
+                    Price = inventory.Price,
+                    Quantity = inventory.Quantity
+                };
+
+            await InventoryRepo.EditInventoryAsync(inv);
             NavManager.NavigateTo("/inventories");
         }
     }

@@ -10,6 +10,6 @@ namespace IMS.DataAccess.Interface
 
         Task DeleteProductByIdAsync(int invId);
 
-        Task<IEnumerable<Product>> GetProductsByNameAsync(string? name = null);
+        Task<IEnumerable<Product>> GetProductsByNameAsync(string name);
     }
 }

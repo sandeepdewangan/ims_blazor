@@ -6,7 +6,7 @@
 
 <EditForm Model="inventory" FormName="formInventory" OnValidSubmit="Save">
     <DataAnnotationsValidator />
-    @* <ValidationSummary /> *@
+    <ValidationSummary />
     <div class="form-group">
         <label for="name">Inventory Name</label>
         <InputText id="name" @bind-Value="inventory.InventoryName" class="form-control" />
@@ -31,11 +31,18 @@
 
 @code {
     [SupplyParameterFromForm]
-    private Inventory inventory { get; set; } = new Inventory();
+    private InventoryViewModel inventory { get; set; } = new InventoryViewModel();
 
     private async Task Save()
     {
-        await InventoryRepo.AddInventoryAsync(inventory);
+        var inv = new Inventory
+            {
+                InventoryId = inventory.InventoryId,
+                InventoryName = inventory.InventoryName,
+                Price = inventory.Price,
+                Quantity = inventory.Quantity
+            };
+        await InventoryRepo.AddInventoryAsync(inv);
         NavManager.NavigateTo("/inventories");
     }
 

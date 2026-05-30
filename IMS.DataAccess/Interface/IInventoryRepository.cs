@@ -10,6 +10,6 @@ namespace IMS.DataAccess.Interface
 
         Task DeleteInventoryByIdAsync(int invId);
 
-        Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string? name = null);
+        Task<IEnumerable<Inventory>> GetInventoriesByNameAsync(string name);
     }
 }
