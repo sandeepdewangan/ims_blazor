@@ -1,0 +1,18 @@
+﻿@page "/autosearch"
+@rendermode InteractiveServer
+@using IMS.WebApp.Components.Controls.Common
+@using static IMS.WebApp.Components.Controls.Common.AutoCompleteComponent
+@inject IProductRepository ProductRepository
+
+<h3>AutoSearchPage</h3>
+<br/>
+<AutoCompleteComponent Label="Product" SearchFunction="SearchProduct" />
+
+@code {
+    private List<ItemViewModel>? SearchProduct(string name)
+    {
+        var list = ProductRepository.GetProductsByNameAsync(name).GetAwaiter().GetResult();
+        if (list is null) return null;
+        return list.Select(x => new ItemViewModel {Id=x.ProductId, Name=x.ProductName})?.ToList();
+    }
+}
