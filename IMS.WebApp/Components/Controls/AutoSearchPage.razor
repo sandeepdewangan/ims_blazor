@@ -9,9 +9,9 @@
 <AutoCompleteComponent Label="Product" SearchFunction="SearchProduct" />
 
 @code {
-    private List<ItemViewModel>? SearchProduct(string name)
+    private async Task<List<ItemViewModel>?> SearchProduct(string name)
     {
-        var list = ProductRepository.GetProductsByNameAsync(name).GetAwaiter().GetResult();
+        var list = await ProductRepository.GetProductsByNameAsync(name);
         if (list is null) return null;
         return list.Select(x => new ItemViewModel {Id=x.ProductId, Name=x.ProductName})?.ToList();
     }
