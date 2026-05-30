@@ -3,6 +3,7 @@
 @using IMS.WebApp.Components.Controls
 @rendermode InteractiveServer
 
+@inject AuthenticationStateProvider AuthStateProvider
 @inject IProductRepository ProductRepo
 @inject NavigationManager NavManager
 
@@ -42,9 +43,22 @@
 
 @code {
     private Product product { get; set; } = new Product();
+    private AuthenticationState? authState;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    }
 
     private async Task Save()
     {
+        string userName = string.Empty;
+        if (authState?.User?.Identity?.IsAuthenticated ?? false)
+        {
+            userName = authState.User.Identity.Name ?? string.Empty;
+            Console.WriteLine(userName);
+        }
+
         await ProductRepo.AddProductAsync(product);
         NavManager.NavigateTo("/products");
     }
