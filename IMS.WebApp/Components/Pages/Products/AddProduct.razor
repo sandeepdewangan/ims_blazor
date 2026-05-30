@@ -43,22 +43,29 @@
 
 @code {
     private Product product { get; set; } = new Product();
-    private AuthenticationState? authState;
 
+    // "Store this property's value during prerendering and restore it when the interactive component starts."
+    [PersistentState]
+    public string? UserName { get; set; }
+
+    // Best way to initialize variable only one time.
     protected override async Task OnInitializedAsync()
     {
-        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if(UserName is null)
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            UserName = authState.User.Identity?.Name;
+        }
+        // Happens after SignalR channel establishes.
+        // Not good for SEO --> Solution PersistantState
+        // if (RendererInfo.IsInteractive)
+        // {
+        //     authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        // }
     }
 
     private async Task Save()
     {
-        string userName = string.Empty;
-        if (authState?.User?.Identity?.IsAuthenticated ?? false)
-        {
-            userName = authState.User.Identity.Name ?? string.Empty;
-            Console.WriteLine(userName);
-        }
-
         await ProductRepo.AddProductAsync(product);
         NavManager.NavigateTo("/products");
     }
